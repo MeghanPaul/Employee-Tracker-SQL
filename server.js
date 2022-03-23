@@ -1,17 +1,44 @@
 const inquirer = require("inquirer");
+const mysql = require('mysql2');
+
+const db = require('./db/connection.js');
+
+/* mysql.createConnection(
+    {
+        host: 'localhost',
+        // Your MySQL username,
+        user: 'root',
+        // Your MySQL password
+        password: 'frankieolive',
+        database: 'company'
+    }
+);
+ */
+/* db.connect(err => {
+    if (err) throw err;
+    console.log('connected to company database');
+}); */
+
+init();
 
 function mainMenuPrompt() {
-    inquirer.prompt([
+    inquirer.prompt(
         {
             type: 'list',
             name: 'selection',
             message: 'Please select an action from the menu below',
-            choices: ['View All Departments','View All Roles','View All Employees','Add a Department','Add an Employee', 'Add a Role', 'Update an Employee\'s Role']
+            choices: ['View All Departments','View All Roles','View All Employees','Add a Department','Add an Employee', 'Add a Role', 'Update an Employee\'s Role','Exit']
         }
-    ]).then(menuAnswer => {
-        if(menuAnswer === 'View All Departments'){
-            
-        }else if(menuAnswer === 'View All Roles'){
+    ).then(menuAnswer => {
+        console.log(menuAnswer);
+        if(menuAnswer.selection === 'View All Departments'){
+           db.query('SELECT * FROM departments', (err, data) => {
+               if(err) throw err;
+               console.table(data);
+               return data;
+           });
+           //mainMenuPrompt();
+        }/* else if(menuAnswer === 'View All Roles'){
 
         }else if(menuAnswer === 'View All Employees'){
 
@@ -20,10 +47,10 @@ function mainMenuPrompt() {
         }else if(menuAnswer === 'Add a Role'){
 
         }else if(menuAnswer === 'Update an Employee\'s Role'){
-
-        }
-    })
-}
+            break;
+        } */
+    });
+};
 
 function addEmpPrompt() {
     inquirer.prompt([
@@ -41,13 +68,13 @@ function addEmpPrompt() {
             type: 'list',
             name: 'role',
             message: 'Select the employee\'s role, or add a new role: ',
-            choices: //reference roles table
+            choices: []//reference roles table
         },
         {
             type: 'list',
             name: 'manager',
             message: 'Select the employee\'s manager, or add a new employee: ',
-            choices: //reference employees table
+            choices: []//reference employees table
         }
     ]);
 }
@@ -78,7 +105,7 @@ function addRolePrompt() {
             type: 'list',
             name: 'department',
             message: 'Select the department for this role, or add a new department: ',
-            choices: //reference departments table
+            choices: []//reference departments table
         }
     ]);
 }
@@ -89,17 +116,27 @@ function updateEmpRolePrompt() {
             type: 'list',
             name: 'employee',
             message: 'Select an employee to update their role: ',
-            choices: //reference employees table
+            choices: [] //reference employees table
         },
         {
             type: 'list',
             name: 'role',
             message: 'Select the updated role, or add a new role to assign to this employee: ',
-            choices: //reference roles table
+            choices: [] //reference roles table
         }
     ]);
 }
 
-function promptUser() {
-    
+/* function promptUser() {
+    mainMenuPrompt();   
+} */
+
+//promptUser().then();
+
+function init() {
+   /*  db.query('SELECT * FROM departments', (err, result) => {
+        if(err) throw err;
+        console.table(result);
+    }) */
+    mainMenuPrompt();
 }
