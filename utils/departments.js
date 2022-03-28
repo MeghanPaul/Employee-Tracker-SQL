@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const mysql = require("mysql2/promise");
 
 function viewAllDepts() {
   return Promise.resolve(

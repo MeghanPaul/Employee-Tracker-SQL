@@ -4,6 +4,7 @@ const mysql = require('mysql2/promise');
 const db = require('./db/connection.js');
 
 let {viewAllDepts, addDept} = require('./utils/departments');
+let {viewAllRoles} = require('./utils/roles');
 
 const mainMenuQuestionArr = [{
     type: 'list',
@@ -26,6 +27,11 @@ function mainMenuPrompt () {
                 break;
             case 'View All Roles':
                 console.log(2);
+                viewAllRoles()
+                .then(([rows,fields])=> {
+                    console.table(rows);
+                    mainMenuPrompt();
+                });
                 break;
             case 'View All Employees':
                 console.log(3);
