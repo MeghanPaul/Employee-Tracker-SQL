@@ -5,6 +5,7 @@ const db = require('./db/connection.js');
 
 let {viewAllDepts, addDept} = require('./utils/departments');
 let {viewAllRoles} = require('./utils/roles');
+let {viewAllEmployees} = require('./utils/employees');
 
 const mainMenuQuestionArr = [{
     type: 'list',
@@ -35,6 +36,11 @@ function mainMenuPrompt () {
                 break;
             case 'View All Employees':
                 console.log(3);
+                viewAllEmployees()
+                .then(([rows,fields])=> {
+                    console.table(rows);
+                    mainMenuPrompt();
+                });
                 break;
             case 'Add A Department':
                 console.log(4);
