@@ -1,54 +1,52 @@
 const inquirer = require("inquirer");
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
 const db = require('./db/connection.js');
 
-/* mysql.createConnection(
-    {
-        host: 'localhost',
-        // Your MySQL username,
-        user: 'root',
-        // Your MySQL password
-        password: 'frankieolive',
-        database: 'company'
-    }
-);
- */
-/* db.connect(err => {
-    if (err) throw err;
-    console.log('connected to company database');
-}); */
+let {viewAllDepts, addDept} = require('./utils/departments');
 
-init();
+const mainMenuQuestionArr = [{
+    type: 'list',
+    name: 'selection',
+    message: 'Please select an action from the menu below',
+    choices: ['View All Departments','View All Roles','View All Employees','Add a Department','Add an Employee', 'Add a Role', 'Update an Employee\'s Role','Exit']
+}];
 
-function mainMenuPrompt() {
-    inquirer.prompt(
-        {
-            type: 'list',
-            name: 'selection',
-            message: 'Please select an action from the menu below',
-            choices: ['View All Departments','View All Roles','View All Employees','Add a Department','Add an Employee', 'Add a Role', 'Update an Employee\'s Role','Exit']
+function mainMenuPrompt () {
+    return inquirer.prompt(mainMenuQuestionArr)
+    .then(({selection}) => {
+        switch(selection) {
+            case 'View All Departments':
+                console.log(1);
+                viewAllDepts()
+                .then(([rows,fields])=> {
+                    console.table(rows);
+                    mainMenuPrompt();
+                });
+                break;
+            case 'View All Roles':
+                console.log(2);
+                break;
+            case 'View All Employees':
+                console.log(3);
+                break;
+            case 'Add A Department':
+                console.log(4);
+                break;
+            case 'Add an Employee':
+                console.log(5);
+                break;
+            case 'Add a Role':
+                console.log(6);
+                break;
+            case 'Update an Employee\'s Role':
+                console.log(7);
+                break;
+            default:
+                console.log(8);
+                break;
         }
-    ).then(menuAnswer => {
-        console.log(menuAnswer);
-        if(menuAnswer.selection === 'View All Departments'){
-           db.query('SELECT * FROM departments', (err, data) => {
-               if(err) throw err;
-               console.table(data);
-               return data;
-           });
-           //mainMenuPrompt();
-        }/* else if(menuAnswer === 'View All Roles'){
-
-        }else if(menuAnswer === 'View All Employees'){
-
-        }else if(menuAnswer === 'Add an Employee'){
-
-        }else if(menuAnswer === 'Add a Role'){
-
-        }else if(menuAnswer === 'Update an Employee\'s Role'){
-            break;
-        } */
+        
     });
 };
 
@@ -127,16 +125,4 @@ function updateEmpRolePrompt() {
     ]);
 }
 
-/* function promptUser() {
-    mainMenuPrompt();   
-} */
-
-//promptUser().then();
-
-function init() {
-   /*  db.query('SELECT * FROM departments', (err, result) => {
-        if(err) throw err;
-        console.table(result);
-    }) */
-    mainMenuPrompt();
-}
+mainMenuPrompt();
