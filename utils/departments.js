@@ -6,6 +6,10 @@ function viewAllDepts() {
   );
 }
 
-let addDept = () => {};
+function addDept(name) {
+  return Promise.resolve(
+    db.promise().query(`INSERT INTO departments (name) VALUES (?);`,name)
+  );
+}
 
 module.exports = { viewAllDepts, addDept };
