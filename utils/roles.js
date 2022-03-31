@@ -1,5 +1,6 @@
-const { query } = require('../db/connection');
+const { query, promise } = require('../db/connection');
 const db = require('../db/connection');
+const {getIdByDeptName} = require('./departments');
 
 function viewAllRoles() {
     return Promise.resolve(
@@ -28,4 +29,12 @@ function getIdByRoleTitle(title) {
     );
 }
 
-module.exports = {viewAllRoles, getAllRoleNames, getIdByRoleTitle};
+async function addRole(title, salary, dept) {
+    dept = await getIdByDeptName(dept); 
+    const query = `INSERT INTO roles (title,salary,department_id) VALUES ('${title}','${salary}','${dept}');`;
+    return Promise.resolve(
+        db.promise().query(query)
+      );
+}
+
+module.exports = {viewAllRoles, getAllRoleNames, getIdByRoleTitle, addRole};

@@ -3,9 +3,13 @@ const mysql = require("mysql2/promise");
 
 const db = require("./db/connection.js");
 
-let { viewAllDepts, addDept } = require("./utils/departments");
-let { viewAllRoles, getAllRoleNames } = require("./utils/roles");
-let { viewAllEmployees, addEmployee, getAllEmployeeNames} = require("./utils/employees");
+let { viewAllDepts, addDept, getAllDeptNames } = require("./utils/departments");
+let { viewAllRoles, getAllRoleNames, addRole } = require("./utils/roles");
+let {
+  viewAllEmployees,
+  addEmployee,
+  getAllEmployeeNames, updateRole
+} = require("./utils/employees");
 
 const mainMenuQuestionArr = [
   {
@@ -66,7 +70,7 @@ async function mainMenuPrompt() {
       case "Add an Employee":
         getAllRoleNames().then((rolesArr) => {
           getAllEmployeeNames().then((employeesArr) => {
-              employeesArr.push('None');
+            employeesArr.push("None");
             const empQuestions = [
               {
                 type: "input",
@@ -88,13 +92,13 @@ async function mainMenuPrompt() {
                 type: "list",
                 name: "manager",
                 message: "Select the employee's manager: ",
-                choices: employeesArr
+                choices: employeesArr,
               },
             ];
             inquirer
               .prompt(empQuestions)
               .then(({ first_name, last_name, role, manager }) => {
-                return addEmployee(first_name, last_name, role, manager)
+                return addEmployee(first_name, last_name, role, manager);
               })
               .then((data) => {
                 console.log("New employee added!");
@@ -105,94 +109,69 @@ async function mainMenuPrompt() {
 
         break;
       case "Add a Role":
-        console.log(6);
+        getAllDeptNames().then((deptsArr) => {
+          const roleQuestions = [
+            {
+              type: "input",
+              name: "title",
+              message: "Enter the role's title: ",
+            },
+            {
+              type: "input",
+              name: "salary",
+              message: "Enter the role's salary: ",
+            },
+            {
+              type: "list",
+              name: "dept",
+              message: "Select which department the role belongs to: ",
+              choices: deptsArr,
+            },
+          ];
+          inquirer
+            .prompt(roleQuestions)
+            .then(({ title, salary, dept }) => {
+              return addRole(title, salary, dept);
+            })
+            .then((data) => {
+              console.log("New Role Added!");
+              mainMenuPrompt();
+            });
+        });
         break;
       case "Update an Employee's Role":
-        console.log(7);
+        getAllEmployeeNames().then(( empArr ) => {
+          getAllRoleNames().then(( rolesArr ) => {
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "name",
+                  message: "Select an employee to update their role: ",
+                  choices: empArr,
+                },
+                {
+                  type: "list",
+                  name: "role",
+                  message: "Select a role to give them: ",
+                  choices: rolesArr,
+                },
+              ])
+              .then(({ name, role }) => {
+                return updateRole(name, role);
+              })
+              .then(({ data }) => {
+                console.log("Employee role updated!");
+                mainMenuPrompt();
+              });
+          });
+        });
         break;
       default:
-        return Promise.resolve();
+        process.exit();
+        break;
     }
   });
 }
 
-function addEmpPrompt() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "first_name",
-      message: "Employee's First Name: ",
-    },
-    {
-      type: "input",
-      name: "last_name",
-      message: "Employee's Last Name: ",
-    },
-    {
-      type: "list",
-      name: "role",
-      message: "Select the employee's role, or add a new role: ",
-      choices: [], //reference roles table
-    },
-    {
-      type: "list",
-      name: "manager",
-      message: "Select the employee's manager, or add a new employee: ",
-      choices: [], //reference employees table
-    },
-  ]);
-}
-
-function addDeptPrompt() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "name",
-      message: "Enter name of new department: ",
-    },
-  ]);
-}
-
-function addRolePrompt() {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "title",
-      message: "Enter new role's title: ",
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "Enter the salary: ",
-    },
-    {
-      type: "list",
-      name: "department",
-      message: "Select the department for this role, or add a new department: ",
-      choices: [], //reference departments table
-    },
-  ]);
-}
-
-function updateEmpRolePrompt() {
-  inquirer.prompt([
-    {
-      type: "list",
-      name: "employee",
-      message: "Select an employee to update their role: ",
-      choices: [], //reference employees table
-    },
-    {
-      type: "list",
-      name: "role",
-      message:
-        "Select the updated role, or add a new role to assign to this employee: ",
-      choices: [], //reference roles table
-    },
-  ]);
-}
-
-/* viewAllDepts().then(([rows,fields])=>{
-    console.log(rows);
-}); */
 mainMenuPrompt();

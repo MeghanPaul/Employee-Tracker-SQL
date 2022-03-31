@@ -41,4 +41,13 @@ function getIdByEmployeeName(name) {
     );
 }
 
-module.exports = { viewAllEmployees, addEmployee, getAllEmployeeNames};
+async function updateRole(name, role) {
+  const first_name = name.split(' ')[0];
+  role = await getIdByRoleTitle(role);
+  const query = `UPDATE employees SET role_id = '${role}' WHERE first_name = '${first_name}';`
+  return Promise.resolve(
+    db.promise().query(query)
+  );
+}
+
+module.exports = { updateRole, viewAllEmployees, addEmployee, getAllEmployeeNames};
