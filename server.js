@@ -65,7 +65,6 @@ async function mainMenuPrompt() {
         break;
       case "Add an Employee":
         getAllRoleNames().then((rolesArr) => {
-          console.log(rolesArr);
           getAllEmployeeNames().then((employeesArr) => {
               employeesArr.push('None');
             const empQuestions = [

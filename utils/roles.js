@@ -19,7 +19,6 @@ function getAllRoleNames() {
 
 function getIdByRoleTitle(title) {
     const query = `SELECT id FROM roles WHERE title = '${title}';`;
-    console.log(query);
     return Promise.resolve(
         db.promise().query(query)
         .then(([rows,fields]) => {

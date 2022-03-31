@@ -11,13 +11,10 @@ async function addEmployee(first_name, last_name, role, manager) {
   }else {
     manager = await getIdByEmployeeName(manager);
   }
-  console.log('Manager value: ' + manager);
 
   role = await getIdByRoleTitle(role);
-  console.log('role id: ' + role);
 
   const query = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${first_name}', '${last_name}', ${role}, ${manager});`;
-  console.log(query);
   Promise.resolve(db.promise().query(query));
 }
 
@@ -31,10 +28,10 @@ function getAllEmployeeNames() {
   );
 }
 
-async function getIdByEmployeeName(name) {
+function getIdByEmployeeName(name) {
   const first_name = name.split(' ')[0];
   const query = `SELECT id FROM employees WHERE first_name = '${first_name}';`;
-    console.log(query);
+    //console.log(query);
     return Promise.resolve(
         db.promise().query(query)
         .then(([rows,fields]) => {
